@@ -9,6 +9,8 @@ import { apiRateLimiter } from './middleware/rateLimit';
 import { errorHandler } from './middleware/errorHandler';
 import { notFound } from './middleware/notFound';
 import healthRouter from './modules/health/health.routes';
+import authRouter from './modules/auth/auth.routes';
+import usersRouter from './modules/users/users.routes';
 
 export function buildApp(): express.Express {
   const app = express();
@@ -39,8 +41,10 @@ export function buildApp(): express.Express {
   // Rate limit (api scope only)
   app.use('/api', apiRateLimiter);
 
-  // API v1 — modules will be mounted in upcoming sprints.
+  // API v1
   const v1 = express.Router();
+  v1.use('/auth', authRouter);
+  v1.use('/me', usersRouter);
   app.use('/api/v1', v1);
 
   // 404

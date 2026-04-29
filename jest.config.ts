@@ -9,6 +9,7 @@ const config: Config = {
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/server.ts'],
   coverageDirectory: 'coverage',
   clearMocks: true,
+  setupFiles: ['<rootDir>/tests/setup.ts'],
 };
 
 export default config;

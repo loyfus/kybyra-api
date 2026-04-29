@@ -13,7 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Sprint 1 will introduce the User model with auth columns.
 // Sprints 2+ will add Car, UserCar, Favorite, StationCache, etc.
 
 model User {
@@ -28,7 +27,41 @@ model User {
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
 
+  refreshTokens    RefreshToken[]
+  deletionRequests AccountDeletionRequest[]
+
   @@map("users")
+}
+
+model RefreshToken {
+  id                String    @id // jti claim of the JWT
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash         String    @unique // sha256 of the issued JWT
+  userAgent         String?
+  ipAddress         String?
+  createdAt         DateTime  @default(now())
+  expiresAt         DateTime
+  revokedAt         DateTime?
+  replacedByTokenId String?
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model AccountDeletionRequest {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requestedAt  DateTime  @default(now())
+  scheduledFor DateTime
+  cancelledAt  DateTime?
+  completedAt  DateTime?
+
+  @@index([userId])
+  @@index([scheduledFor])
+  @@map("account_deletion_requests")
 }
 
 enum Theme {
