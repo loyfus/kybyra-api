@@ -1,0 +1,13 @@
+# Default to LF line endings on commit, regardless of OS.
+* text=auto eol=lf
+
+# Force binary handling for these.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jks binary
+*.keystore binary
+*.p12 binary
+*.p8 binary
