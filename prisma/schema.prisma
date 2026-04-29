@@ -29,6 +29,8 @@ model User {
 
   refreshTokens    RefreshToken[]
   deletionRequests AccountDeletionRequest[]
+  userCars         UserCar[]
+  favorites        Favorite[]
 
   @@map("users")
 }
@@ -68,4 +70,100 @@ enum Theme {
   SYSTEM
   LIGHT
   DARK
+}
+
+model Car {
+  id     String  @id @default(cuid())
+  slug   String  @unique
+  brand  String
+  model  String
+  variant String?
+  year   Int
+
+  // Classification
+  bodyStyle  String? // sedan, suv, hatchback, pickup, coupe, wagon
+  segment    String? // compact, midsize, fullsize, premium, luxury
+  drivetrain String? // FWD, RWD, AWD
+  isHybrid   Boolean @default(false)
+  isPhev     Boolean @default(false)
+
+  // Power & performance
+  motorPowerKw   Int?
+  motorTorqueNm  Int?
+  topSpeedKmh    Int?
+  zeroToHundredS Float?
+
+  // Battery
+  batteryKwh       Float?
+  usableBatteryKwh Float?
+  rangeKmWltp      Int?
+  rangeKmEpa       Int?
+  efficiencyWhKm   Int?
+
+  // Charging
+  acChargerKw      Float?
+  dcChargerKw      Float?
+  chargingPortType String? // CCS2, NACS, Type2, ChaDeMo, GB/T
+
+  // Dimensions
+  lengthMm        Int?
+  widthMm         Int?
+  heightMm        Int?
+  weightKg        Int?
+  cargoLiters     Int?
+  seatingCapacity Int?
+
+  // Pricing (optional, dev-time)
+  msrpUsd  Int?
+  priceBrl Int?
+
+  // Meta
+  imageUrl           String? // local path served by /uploads/cars/<slug>.jpg
+  imageAttribution   String? // e.g. "Photo by John Doe / Wikipedia, CC-BY-SA 4.0"
+  imageSourceUrl     String? // canonical source (Wikipedia/Commons page)
+  wikidataId         String? // e.g. Q2105 for Tesla Model 3 (used by importer)
+  description        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userCars  UserCar[]
+  favorites Favorite[]
+
+  @@index([brand])
+  @@index([year])
+  @@index([rangeKmWltp])
+  @@index([isHybrid, isPhev])
+  @@map("cars")
+}
+
+model UserCar {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  carId       String
+  car         Car       @relation(fields: [carId], references: [id], onDelete: Cascade)
+  nickname    String?
+  purchasedAt DateTime?
+  odometerKm  Int?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, carId])
+  @@index([userId])
+  @@map("user_cars")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, carId])
+  @@index([userId])
+  @@map("favorites")
 }

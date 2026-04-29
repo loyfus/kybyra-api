@@ -1,3 +1,4 @@
+import path from 'node:path';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -11,6 +12,10 @@ import { notFound } from './middleware/notFound';
 import healthRouter from './modules/health/health.routes';
 import authRouter from './modules/auth/auth.routes';
 import usersRouter from './modules/users/users.routes';
+import carsRouter from './modules/cars/cars.routes';
+import garageRouter from './modules/garage/garage.routes';
+import favoritesRouter from './modules/favorites/favorites.routes';
+import vinRouter from './modules/vin/vin.routes';
 
 export function buildApp(): express.Express {
   const app = express();
@@ -38,13 +43,27 @@ export function buildApp(): express.Express {
   // Health (outside /api so rate limiter doesn't apply)
   app.use('/health', healthRouter);
 
+  // Static uploads (car images, etc.) — outside /api, no rate limit, with cache headers.
+  app.use(
+    '/uploads',
+    express.static(path.resolve(process.cwd(), 'uploads'), {
+      maxAge: '7d',
+      immutable: false,
+      fallthrough: false,
+    }),
+  );
+
   // Rate limit (api scope only)
   app.use('/api', apiRateLimiter);
 
   // API v1
   const v1 = express.Router();
   v1.use('/auth', authRouter);
-  v1.use('/me', usersRouter);
+  v1.use('/cars', carsRouter);
+  v1.use('/vin', vinRouter);
+  v1.use('/me/garage', garageRouter);
+  v1.use('/me/favorites', favoritesRouter);
+  v1.use('/me', usersRouter); // Mount LAST so /me/garage and /me/favorites are matched first.
   app.use('/api/v1', v1);
 
   // 404
