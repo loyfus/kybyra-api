@@ -66,6 +66,16 @@ export function buildApp(): express.Express {
   v1.use('/me', usersRouter); // Mount LAST so /me/garage and /me/favorites are matched first.
   app.use('/api/v1', v1);
 
+  // Root endpoint — avoids confusing 404 when visiting the base URL
+  app.get('/', (_req, res) => {
+    res.json({
+      name: 'Kybyra API',
+      version: '1.0.0',
+      health: '/api/v1/health',
+      docs: '/api/v1/health',
+    });
+  });
+
   // 404
   app.use(notFound);
 
