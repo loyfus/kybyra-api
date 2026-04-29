@@ -1,7 +1,7 @@
 import { initSentry } from './config/sentry';
 initSentry();
 
-import { buildApp } from './app';
+import { buildApp } from './server-app';
 import { env } from './config/env';
 import { logger } from './config/logger';
 import { prisma } from './config/prisma';

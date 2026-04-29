@@ -1,6 +1,7 @@
+// @ts-ignore — serverless-http has no bundled types
 import serverless from 'serverless-http';
 import { initSentry, Sentry } from '../src/config/sentry';
-import { buildApp } from '../src/app';
+import { buildApp } from '../src/server-app';
 import { prisma } from '../src/config/prisma';
 
 initSentry();
