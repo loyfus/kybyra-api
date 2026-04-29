@@ -19,6 +19,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
@@ -43,6 +44,7 @@
     "pino": "^9.6.0",
     "pino-http": "^10.4.0",
     "pino-pretty": "^13.0.0",
+    "serverless-http": "^4.0.0",
     "swagger-ui-express": "^5.0.1",
     "zod": "^3.24.1"
   },
