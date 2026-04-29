@@ -54,3 +54,6 @@ Api/uploads/
 
 # Misc
 .cache/
+
+.vercel
+.env*.local
