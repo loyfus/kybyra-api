@@ -1,0 +1,37 @@
+// Prisma schema for Kybyra API
+// Datasource uses PostgreSQL with the PostGIS extension enabled.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+// Sprint 1 will introduce the User model with auth columns.
+// Sprints 2+ will add Car, UserCar, Favorite, StationCache, etc.
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  avatarUrl    String?
+  locale       String    @default("pt-BR")
+  theme        Theme     @default(SYSTEM)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@map("users")
+}
+
+enum Theme {
+  SYSTEM
+  LIGHT
+  DARK
+}
